@@ -17,6 +17,15 @@ class User < ApplicationRecord
   attr_reader :password
   after_initialize :ensure_session_token
 
+  has_many :lists,
+    class_name: :List,
+    foreign_key: :user_id,
+    primary_key: :id
+
+  has_many :tasks,
+    through: :lists,
+    source: :tasks
+
   def self.find_by_credentials(username, password)
       user = User.find_by(username: username)
       return nil unless user
@@ -41,5 +50,5 @@ class User < ApplicationRecord
     def ensure_session_token
       self.session_token ||= SecureRandom.urlsafe_base64
     end
-    
+
 end
